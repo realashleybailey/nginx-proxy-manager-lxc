@@ -7,7 +7,7 @@ TEMPLOG="$TEMPDIR/tmplog"
 TEMPERR="$TEMPDIR/tmperr"
 LASTCMD=""
 WGETOPT="-t 1 -T 15 -q"
-DEVDEPS="npm g++ make gcc git python3-dev musl-dev libffi-dev openssl-dev mariadb"
+DEVDEPS="npm g++ make gcc git python3-dev musl-dev libffi-dev openssl-dev"
 NPMURL="https://github.com/NginxProxyManager/nginx-proxy-manager"
 
 cd $TEMPDIR
@@ -189,13 +189,13 @@ if [ ! -f /app/config/production.json ]; then
 cat << 'EOF' > /app/config/production.json
 {
   "database": {
-   "fromEnv": true,
-    "engine": "mysql",
-    "host": "127.0.0.1",
-    "port": "3306",
-    "user": "npm",
-    "password": "npm",
-    "name": "npm"
+    "engine": "knex-native",
+    "knex": {
+      "client": "sqlite3",
+      "connection": {
+        "filename": "/data/database.sqlite"
+      }
+    }
   }
 }
 EOF
@@ -203,13 +203,6 @@ fi
 cd /app
 export NODE_ENV=development
 runcmd yarn install
-
-# Download Defaults
-# log "Downloading Defaults"
-# runcmd 'wget $WGETOPT -c https://github.com/realashleybailey/NPM-Defaults/releases/download/V1/defaults.tar -O - | tar -xz'
-# cd ./defaults
-
-# cp ./data /
 
 # Create NPM service
 log "Creating NPM service"
